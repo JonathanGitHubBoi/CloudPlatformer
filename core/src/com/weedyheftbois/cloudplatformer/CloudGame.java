@@ -15,6 +15,7 @@ public class CloudGame extends ApplicationAdapter {
 		img = new Texture("badlogic.jpg");
 	}
 
+	// Jon wuz here
 	@Override
 	public void render () {
 		ScreenUtils.clear(1, 0, 0, 1);
