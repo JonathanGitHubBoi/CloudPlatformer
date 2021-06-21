@@ -16,6 +16,7 @@ public class CloudGame extends ApplicationAdapter {
 	}
 
 	// Jon wuz here
+	// Josiah wuz here too!
 	@Override
 	public void render () {
 		ScreenUtils.clear(1, 0, 0, 1);
