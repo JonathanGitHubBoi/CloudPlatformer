@@ -15,14 +15,19 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.Iterator;
 
+import static java.lang.System.currentTimeMillis;
+
 public class CloudGame extends ApplicationAdapter {
 	private OrthographicCamera camera;
 	SpriteBatch batch;
 	private Texture Cloud_W;
 	private Rectangle CloudWarrior;
-	public float GravCon = 1.5f;
-	private float time_jump_begin = 0;
-	private boolean Jump = false;
+	public float LaunchV = 18;
+	public double t = 0;
+	public long start_time = currentTimeMillis();
+	public boolean jump = false;
+	private long jump_start;
+
 
 	@Override
 	public void create () {
@@ -32,6 +37,8 @@ public class CloudGame extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		//raindrops = new Array<Rectangle>();
 		Cloud_W = new Texture(Gdx.files.internal("CWFill_in.png"));
+
+
 	//	spawnRaindrop();
 	}
 
@@ -52,13 +59,14 @@ public class CloudGame extends ApplicationAdapter {
 	//	moveRaindrops();
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		float time_since_jump = TimeUtils.nanoTime() - time_jump_begin;
-		if (Jump)
-			CloudWarrior.y = (float) height_time(time_since_jump);
 	//	renderRaindrops(batch);
 		batch.draw(Cloud_W, CloudWarrior.x, CloudWarrior.y);
+		CloudWarrior.y += -16 * (t * t) + LaunchV * (t);
+
 
 		//No new draws below
+
+
 		batch.end();
 		camera.update();
 		checkInput();
@@ -67,28 +75,26 @@ public class CloudGame extends ApplicationAdapter {
 
 	private void checkInput() {
 
+
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A))
 			CloudWarrior.x -= 200 * Gdx.graphics.getDeltaTime();
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))
 			CloudWarrior.x += 200 * Gdx.graphics.getDeltaTime();
-		if(CloudWarrior.x < 0) CloudWarrior.x = 0;
-		if(CloudWarrior.x > 800 - 20) CloudWarrior.x = 800 - 20;
-		if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))
-			OnJump();
+		if (CloudWarrior.x < 0) CloudWarrior.x = 0;
+		if (CloudWarrior.x > 800 - 20) CloudWarrior.x = 800 - 20;
+		if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+			jump_start = System.currentTimeMillis();
+			jump = true;
+		}
+		if (jump == true) {
+
+			t =  (System.currentTimeMillis() - jump_start) / 1000;
+			CloudWarrior.y += -16 * (t * t) + LaunchV * (t);
+			System.out.println("t = " + t);
+			System.out.println("y = " + CloudWarrior.y);
+		}
 	}
 
-	private void OnJump() {
-		time_jump_begin = TimeUtils.nanoTime();
-		Jump = true;
-	}
-
-	private double height_time(float t) {
-		double time = t*1000000000;
-		double v = 2;
-		double Out = v * time + (GravCon * time * time) / 2;
-		System.out.println(Out +100);
-		return Out + 100;
-	}
 
 /*	private void doRaindropSpawn() {
 		if (TimeUtils.nanoTime() - last_drop_time > 1000000000) spawnRaindrop();
@@ -124,5 +130,6 @@ public class CloudGame extends ApplicationAdapter {
 	public void dispose () {
 		Cloud_W.dispose();
 		batch.dispose();
+
 	}
 }
