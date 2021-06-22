@@ -22,17 +22,15 @@ public class CloudGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	private Texture Cloud_W;
 	private Rectangle CloudWarrior;
-	public float LaunchV = 18;
-	public double t = 0;
-	public long start_time = currentTimeMillis();
+	public float LaunchV = 32;
 	public boolean jump = false;
-	private long jump_start;
+	private float jump_start;
 
 
 	@Override
 	public void create () {
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false,800, 480);
+		camera.setToOrtho(false,1440, 900);
 		CloudWarrior = initCloudW();
 		batch = new SpriteBatch();
 		//raindrops = new Array<Rectangle>();
@@ -61,7 +59,8 @@ public class CloudGame extends ApplicationAdapter {
 		batch.begin();
 	//	renderRaindrops(batch);
 		batch.draw(Cloud_W, CloudWarrior.x, CloudWarrior.y);
-		CloudWarrior.y += -16 * (t * t) + LaunchV * (t);
+
+
 
 
 		//No new draws below
@@ -81,18 +80,22 @@ public class CloudGame extends ApplicationAdapter {
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))
 			CloudWarrior.x += 200 * Gdx.graphics.getDeltaTime();
 		if (CloudWarrior.x < 0) CloudWarrior.x = 0;
-		if (CloudWarrior.x > 800 - 20) CloudWarrior.x = 800 - 20;
+		if (CloudWarrior.x > 1440 - 40) CloudWarrior.x = 1440 - 40;
 		if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-			jump_start = System.currentTimeMillis();
+			jump_start = TimeUtils.nanoTime();
 			jump = true;
 		}
 		if (jump == true) {
 
-			t =  (System.currentTimeMillis() - jump_start) / 1000;
-			CloudWarrior.y += -16 * (t * t) + LaunchV * (t);
-			System.out.println("t = " + t);
-			System.out.println("y = " + CloudWarrior.y);
+			float t =  (TimeUtils.nanoTime() - jump_start ) / 1000000000f;
+			CloudWarrior.y += -50 * (t * t) + LaunchV * (t);
 		}
+		if (CloudWarrior.y < 0) {
+			jump = false;
+			CloudWarrior.y = 1;
+		}
+
+
 	}
 
 
