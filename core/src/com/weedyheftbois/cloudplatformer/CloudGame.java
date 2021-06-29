@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 import static java.lang.System.currentTimeMillis;
@@ -41,7 +42,8 @@ public class CloudGame extends ApplicationAdapter {
 		renderBox();
 		BoxTex = new Texture(Gdx.files.internal("Box.png"));
 		BoxRec = renderBox();
-		worldbuilder();
+		int[][] world1 = new int[10][10];
+		worldbuilder(world1);
 
 
 	//	spawnRaindrop();
@@ -56,14 +58,12 @@ public class CloudGame extends ApplicationAdapter {
 		return CloudWOut;
 	}
 	public static void main(String[] args) {
-		int[][] world1 = new int[10][10];
 
-		worldbuilder(world1);
 	}
 
 	public static void worldbuilder(int[][] world1) {
 		world1[0][0] = 1;
-		System.out.print(world1);
+		System.out.print(Arrays.deepToString(world1));
 	}
 	private Rectangle renderBox(){
 		Rectangle Box = new Rectangle();
