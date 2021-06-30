@@ -64,7 +64,11 @@ public class CloudGame extends ApplicationAdapter {
 	public static void worldbuilder(int[][] world1) {
 		world1[0][0] = 1;
 		System.out.print(Arrays.deepToString(world1));
-	}
+			for (int[] j : world1) {
+				for (int k : j);
+
+			}
+		}
 	private Rectangle renderBox(){
 		Rectangle Box = new Rectangle();
 		Box.x = 480;
