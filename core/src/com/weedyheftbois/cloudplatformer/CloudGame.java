@@ -39,10 +39,10 @@ public class CloudGame extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		//raindrops = new Array<Rectangle>();
 		CloudTex = new Texture(Gdx.files.internal("CWFill_in.png"));
-		renderBox();
-		BoxTex = new Texture(Gdx.files.internal("Box.png"));
-		BoxRec = renderBox();
-		int[][] world1 = new int[10][10];
+		// renderBox();
+		//BoxTex = new Texture(Gdx.files.internal("Box.png"));
+
+		int[][] world1 = new int[144][90];
 		worldbuilder(world1);
 
 
@@ -61,20 +61,27 @@ public class CloudGame extends ApplicationAdapter {
 
 	}
 
-	public static void worldbuilder(int[][] world1) {
+	public void worldbuilder(int[][] world1) {
+
 		world1[0][0] = 1;
 		System.out.print(Arrays.deepToString(world1));
-			for (int[] j : world1) {
-				for (int k : j);
-
+			for (int[] world_height : world1) {
+				for (int world_width : world_height) {
+					int x = world_width;
+					int y = world_height;
+					if (world_width == 1){
+						BoxRec = renderBox(x, y);
+					}
+				}
 			}
 		}
-	private Rectangle renderBox(){
+	private Rectangle renderBox(int Box_real_x, int Box_real_y){
 		Rectangle Box = new Rectangle();
-		Box.x = 480;
-		Box.y = 480;
+		Box.x = Box_real_x;
+		Box.y = Box_real_y;
 		Box.width = 10;
 		Box.height = 10;
+		BoxTex = new Texture(Gdx.files.internal("Box.png"));
 		return Box;
 	}
 
