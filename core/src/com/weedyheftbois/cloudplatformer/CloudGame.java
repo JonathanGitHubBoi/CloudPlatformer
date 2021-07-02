@@ -5,40 +5,34 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 
-import java.util.Arrays;
-import java.util.Iterator;
-
-import static java.lang.System.currentTimeMillis;
-
 public class CloudGame extends ApplicationAdapter {
 	private OrthographicCamera camera;
 	SpriteBatch batch;
-	private Texture CloudTex;
-	private Rectangle CloudWRec;
-	public float LaunchV = 32;
+	private Texture cloudTex;
+	private Rectangle cloudWRec;
+	public float launchV = 32;
 	public boolean jump = false;
 	private float jump_start;
-	private Texture BoxTex;
+	private Texture boxTex;
 	private Rectangle BoxRec;
+	private Array<Rectangle> box_array;
+	boolean boxTouchW = true;
 
 
 	@Override
 	public void create () {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false,1440, 900);
-		CloudWRec = initCloudW();
+		cloudWRec = initCloudW();
 		batch = new SpriteBatch();
-		//raindrops = new Array<Rectangle>();
-		CloudTex = new Texture(Gdx.files.internal("CWFill_in.png"));
+		box_array = new Array<Rectangle>();
+		cloudTex = new Texture(Gdx.files.internal("CWFill_in.png"));
 		// renderBox();
 		//BoxTex = new Texture(Gdx.files.internal("Box.png"));
 
@@ -63,25 +57,35 @@ public class CloudGame extends ApplicationAdapter {
 
 	public void worldbuilder(int[][] world1) {
 
-		world1[0][0] = 1;
-		System.out.print(Arrays.deepToString(world1));
+		world1[0][89] = 1;
+		world1[0][50] = 1;
+		//System.out.print(Arrays.deepToString(world1));
+		int x = 0;
+		int y = 0;
 			for (int[] world_height : world1) {
 				for (int world_width : world_height) {
-					int x = world_width;
-					int y = world_height;
 					if (world_width == 1){
-						BoxRec = renderBox(x, y);
+						int tile_scale = 10;
+						box_array.add(renderBox(x * tile_scale, y * tile_scale));
 					}
+					y++;
 				}
+				x ++;
 			}
 		}
+
+	private void renderBoxArray(SpriteBatch batchIn){
+		for (Rectangle box : box_array){
+	batchIn.draw(boxTex, box.x, box.y);
+		}
+	}
 	private Rectangle renderBox(int Box_real_x, int Box_real_y){
 		Rectangle Box = new Rectangle();
 		Box.x = Box_real_x;
 		Box.y = Box_real_y;
 		Box.width = 10;
 		Box.height = 10;
-		BoxTex = new Texture(Gdx.files.internal("Box.png"));
+		boxTex = new Texture(Gdx.files.internal("Box.png"));
 		return Box;
 	}
 
@@ -94,8 +98,15 @@ public class CloudGame extends ApplicationAdapter {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 	//	renderRaindrops(batch);
-		batch.draw(CloudTex, CloudWRec.x, CloudWRec.y);
-		batch.draw(BoxTex, BoxRec.x, BoxRec.y);
+		batch.draw(cloudTex, cloudWRec.x, cloudWRec.y);
+	//	batch.draw(BoxTex, BoxRec.x, BoxRec.y);
+		renderBoxArray(batch);
+		for (Rectangle box : box_array){
+			if (box.overlaps(cloudWRec)){
+				boxTouchW = true;
+			}
+			else boxTouchW = false;
+		}
 
 
 
@@ -112,11 +123,11 @@ public class CloudGame extends ApplicationAdapter {
 
 
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A))
-			CloudWRec.x -= 200 * Gdx.graphics.getDeltaTime();
+			cloudWRec.x -= 200 * Gdx.graphics.getDeltaTime();
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))
-			CloudWRec.x += 200 * Gdx.graphics.getDeltaTime();
-		if (CloudWRec.x < 0) CloudWRec.x = 0;
-		if (CloudWRec.x > 1440 - 40) CloudWRec.x = 1440 - 40;
+			cloudWRec.x += 200 * Gdx.graphics.getDeltaTime();
+		if (cloudWRec.x < 0) cloudWRec.x = 0;
+		if (cloudWRec.x > 1440 - 40) cloudWRec.x = 1440 - 40;
 		if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
 			jump_start = TimeUtils.nanoTime();
 			jump = true;
@@ -124,11 +135,11 @@ public class CloudGame extends ApplicationAdapter {
 		if (jump == true) {
 
 			float t =  (TimeUtils.nanoTime() - jump_start ) / 1000000000f;
-			CloudWRec.y += -50 * (t * t) + LaunchV * (t);
+			cloudWRec.y += -50 * (t * t) + launchV * (t);
 		}
-		if (CloudWRec.y < 0) {
+		if (cloudWRec.y < 0 || ) {
 			jump = false;
-			CloudWRec.y = 1;
+			cloudWRec.y = 1;
 		}
 
 
@@ -167,7 +178,7 @@ public class CloudGame extends ApplicationAdapter {
 */
 	@Override
 	public void dispose () {
-		CloudTex.dispose();
+		cloudTex.dispose();
 		batch.dispose();
 
 	}
